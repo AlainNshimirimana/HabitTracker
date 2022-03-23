@@ -53,8 +53,56 @@ namespace HabitTracker
                         Console.WriteLine("\nGoodbye");
                         closeApp = true;
                         break;
+
+                    case 1:
+                        GetRecords();
+                        break;
+                    case 2:
+                        AddRecord();
+                        break;
+                    case 3:
+                        DeleteRecord();
+                        break;
+                    case 4:
+                        UpdateRecord();
+                        break;
+                    default:
+                        Console.WriteLine("\nPlease enter a valid integer (0-4)");
+                        break;
                 }
             }
+        }
+
+        static void GetRecords()  //retrieve records from the server
+        {
+
+        }
+        private static void AddRecord() //add new record
+        {
+            string date = DateInput();
+            int hoursDuration = HoursInput();
+        }
+        internal static string DateInput()
+        {
+            Console.WriteLine("\nPlease enter workout date (Format: dd-mm-yy): Enter 0 to return to main menu");
+            string dateInput = Console.ReadLine();
+            if (dateInput == "0") { UserInput(); }
+            return dateInput;
+        }
+        internal static int HoursInput()
+        {
+            Console.WriteLine("\nPlease enter workout duration (Format: Integer only. Round up to nearest whole number): Enter 0 to return to main menu\n> ");
+            int hoursInput = Console.Read();
+            if(hoursInput == 0) { UserInput(); }
+            return hoursInput;
+        }
+        static void DeleteRecord() //delete record
+        {
+
+        }
+        static void UpdateRecord() //Update record
+        {
+
         }
     }
 }
