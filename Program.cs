@@ -5,9 +5,10 @@ namespace HabitTracker
 {
     internal class Program
     {
+        static string connectionString = @"Data Source=habitTracker.db";
         static void Main(string[] args)
         {
-            string connectionString = @"Data Source=habitTracker.db";
+            //string connectionString = @"Data Source=habitTracker.db";
             using (var connection = new SQLiteConnection(connectionString))
             {
                 connection.Open();
@@ -30,7 +31,6 @@ namespace HabitTracker
         {
             Console.Clear();
             bool closeApp = false;
-            int input;
             while (closeApp == false)
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
@@ -41,29 +41,28 @@ namespace HabitTracker
                 Console.WriteLine("2. New Record Entry");
                 Console.WriteLine("3. Delete Record");
                 Console.WriteLine("4. Update Record");
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("> ");
-                do
-                {
-                    input = Console.Read();
-                }while (input < 0 || input > 4);
+                Console.ResetColor();
+                string input = Console.ReadLine();
 
                 switch (input)
                 {
-                    case 0:
+                    case "0":
                         Console.WriteLine("\nGoodbye");
                         closeApp = true;
                         break;
 
-                    case 1:
+                    case "1":
                         GetRecords();
                         break;
-                    case 2:
+                    case "2":
                         AddRecord();
                         break;
-                    case 3:
+                    case "3":
                         DeleteRecord();
                         break;
-                    case 4:
+                    case "4":
                         UpdateRecord();
                         break;
                     default:
@@ -81,20 +80,34 @@ namespace HabitTracker
         {
             string date = DateInput();
             int hoursDuration = HoursInput();
+            //now add the user inputs to the database
+            using (var connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+                var cmd = connection.CreateCommand();
+                cmd.CommandText =
+                    $"INSERT INTO WorkoutTracker (Date, Duration_hrs) VALUES('{date}', {hoursDuration})";
+                cmd.ExecuteNonQuery();
+                connection.Close();
+            }
         }
         internal static string DateInput()
         {
-            Console.WriteLine("\nPlease enter workout date (Format: dd-mm-yy): Enter 0 to return to main menu");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("\nPlease enter workout date (Format: dd-mm-yy): Enter 0 to return to main menu \n> ");
+            Console.ResetColor();
             string dateInput = Console.ReadLine();
             if (dateInput == "0") { UserInput(); }
             return dateInput;
         }
         internal static int HoursInput()
         {
-            Console.WriteLine("\nPlease enter workout duration (Format: Integer only. Round up to nearest whole number): Enter 0 to return to main menu\n> ");
-            int hoursInput = Console.Read();
-            if(hoursInput == 0) { UserInput(); }
-            return hoursInput;
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("\nPlease enter workout duration (Format: Integer only. Round up to nearest whole number): Enter 0 to return to main menu\n> ");
+            Console.ResetColor();
+            string hoursInput = Console.ReadLine();
+            if(hoursInput == "0") { UserInput(); }
+            return Int32.Parse(hoursInput);
         }
         static void DeleteRecord() //delete record
         {
