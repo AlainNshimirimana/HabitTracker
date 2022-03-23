@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
+using System.IO;
 
 namespace HabitTracker
 {
