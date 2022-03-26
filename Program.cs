@@ -106,8 +106,14 @@ namespace HabitTracker
                 {
                     Console.WriteLine("No Data Found");
                 }
-                cmd.ExecuteNonQuery();
                 connection.Close();
+                // Now loop through the workoutTracked List and display all data
+                foreach (var workout in workoutTracked)
+                {
+                    Console.WriteLine($"{workout.Id} | {workout.Date.ToString("MM-dd-yy")} | Duration: {workout.Duration} hrs");
+                }
+
+                Console.WriteLine();
             }
         }
         private static void AddRecord() //add new record
