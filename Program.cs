@@ -137,24 +137,6 @@ namespace HabitTracker
                 connection.Close();
             }
         }
-        internal static string DateInput()
-        {
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("\nPlease enter workout date (Format: mm-dd-yy): Enter 0 to return to main menu \n> ");
-            Console.ResetColor();
-            string dateInput = Console.ReadLine();
-            if (dateInput == "0") { UserInput(); }
-            return dateInput;
-        }
-        internal static int HoursInput()
-        {
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("\nPlease enter workout duration (Format: Integer only. Round up to nearest whole number): Enter 0 to return to main menu\n> ");
-            Console.ResetColor();
-            string hoursInput = Console.ReadLine();
-            if(hoursInput == "0") { UserInput(); }
-            return Int32.Parse(hoursInput);
-        }
 
         // DELETE RECORD
         static void DeleteRecord()
@@ -181,6 +163,35 @@ namespace HabitTracker
                 UserInput();
             }
         }
+
+        // UPDATE RECORD
+        static void UpdateRecord() //Update record
+        {
+            // Let's start by showing the user All data in the table
+            Console.Clear();
+            GetRecords();
+            var recordId = GetIdInput();
+
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+                var cmd = connection.CreateCommand();
+                cmd.CommandText =
+                    $"DELETE FROM WorkoutTracker WHERE Id = {recordId}";
+                int rowCount = cmd.ExecuteNonQuery();
+
+                if(rowCount == 0)
+                {
+                    Console.WriteLine($"\nRecord with Id number of {recordId} doesn't exist.");
+                    DeleteRecord();
+                }
+                Console.WriteLine($"\nThe record with the Id of {recordId} was updated successfully");
+                UserInput();
+            }
+        }
+
+        // INTERNAL USER INPUT METHODS for getting Id, Date, and Duration inputs from user
+        // Id
         internal static int GetIdInput()
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
@@ -191,11 +202,25 @@ namespace HabitTracker
 
             return Int32.Parse(idInput);
         }
-
-        // UPDATE RECORD
-        static void UpdateRecord() //Update record
+        // Date
+        internal static string DateInput()
         {
-
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("\nPlease enter workout date (Format: mm-dd-yy): Enter 0 to return to main menu \n> ");
+            Console.ResetColor();
+            string dateInput = Console.ReadLine();
+            if (dateInput == "0") { UserInput(); }
+            return dateInput;
+        }
+        // Workout Duration
+        internal static int HoursInput()
+        {
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("\nPlease enter workout duration (Format: Integer only. Round up to nearest whole number): Enter 0 to return to main menu\n> ");
+            Console.ResetColor();
+            string hoursInput = Console.ReadLine();
+            if(hoursInput == "0") { UserInput(); }
+            return Int32.Parse(hoursInput);
         }
     }
 
