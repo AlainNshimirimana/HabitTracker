@@ -108,9 +108,13 @@ namespace HabitTracker
                 }
                 connection.Close();
                 // Now loop through the workoutTracked List and display all data
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine(" Id |  Date    | Duration ");
+                Console.ResetColor();
+                Console.WriteLine("+---+----------+---------+");
                 foreach (var workout in workoutTracked)
                 {
-                    Console.WriteLine($"{workout.Id} | {workout.Date.ToString("MM-dd-yy")} | Duration: {workout.Duration} hrs");
+                    Console.WriteLine($" {workout.Id}  | {workout.Date.ToString("MM-dd-yy")} | {workout.Duration} hrs");
                 }
 
                 Console.WriteLine();
