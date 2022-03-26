@@ -120,7 +120,9 @@ namespace HabitTracker
                 Console.WriteLine();
             }
         }
-        private static void AddRecord() //add new record
+
+        // ADD RECORD
+        static void AddRecord() //add new record
         {
             string date = DateInput();
             int hoursDuration = HoursInput();
@@ -153,10 +155,44 @@ namespace HabitTracker
             if(hoursInput == "0") { UserInput(); }
             return Int32.Parse(hoursInput);
         }
-        static void DeleteRecord() //delete record
-        {
 
+        // DELETE RECORD
+        static void DeleteRecord()
+        {
+            // Let's start by showing the user All data in the table
+            Console.Clear();
+            GetRecords();
+            var recordId = GetIdInput();
+
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+                var cmd = connection.CreateCommand();
+                cmd.CommandText =
+                    $"DELETE FROM WorkoutTracker WHERE Id = {recordId}";
+                int rowCount = cmd.ExecuteNonQuery();
+
+                if(rowCount == 0)
+                {
+                    Console.WriteLine($"\nRecord with Id number of {recordId} doesn't exist.");
+                    DeleteRecord();
+                }
+                Console.WriteLine($"\nThe record with the Id of {recordId} was deleted successfully");
+                UserInput();
+            }
         }
+        internal static int GetIdInput()
+        {
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("\nPlease enter the Id of the record you want to delete or Enter 0 to return to main menu\n> ");
+            Console.ResetColor();
+            string idInput = Console.ReadLine();
+            if(idInput == "0") { UserInput(); }
+
+            return Int32.Parse(idInput);
+        }
+
+        // UPDATE RECORD
         static void UpdateRecord() //Update record
         {
 
