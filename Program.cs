@@ -159,8 +159,8 @@ namespace HabitTracker
                     Console.WriteLine($"\nRecord with Id number of {recordId} doesn't exist.");
                     DeleteRecord();
                 }
-                Console.WriteLine($"\nThe record with the Id of {recordId} was deleted successfully");
-                UserInput();
+                Console.WriteLine($"\nThe record with the Id of {recordId} was successfully deleted");
+                //UserInput();
             }
         }
 
@@ -176,17 +176,22 @@ namespace HabitTracker
             {
                 connection.Open();
                 var cmd = connection.CreateCommand();
-                cmd.CommandText =
-                    $"DELETE FROM WorkoutTracker WHERE Id = {recordId}";
-                int rowCount = cmd.ExecuteNonQuery();
-
-                if(rowCount == 0)
+                cmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM WorkoutTracker WHERE Id = {recordId})";
+                int checkQuery = Convert.ToInt32(cmd.ExecuteScalar()); // returns 0 if false. 1 if true
+                if(checkQuery == 0)
                 {
-                    Console.WriteLine($"\nRecord with Id number of {recordId} doesn't exist.");
-                    DeleteRecord();
+                    Console.WriteLine($"\nRecord with Id of {recordId} doesn't exist.\n");
+                    UpdateRecord();
                 }
-                Console.WriteLine($"\nThe record with the Id of {recordId} was updated successfully");
-                UserInput();
+                string date = DateInput();
+                int hoursDuration = HoursInput();
+                cmd.CommandText =
+                    @$"UPDATE WorkoutTracker
+                    SET Date = '{date}', Duration_hrs = {hoursDuration} 
+                    WHERE Id = {recordId}";
+                cmd.ExecuteNonQuery();
+                Console.WriteLine($"\nThe record with the Id of {recordId} was successfully updated");
+                connection.Close();
             }
         }
 
@@ -195,7 +200,7 @@ namespace HabitTracker
         internal static int GetIdInput()
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("\nPlease enter the Id of the record you want to delete or Enter 0 to return to main menu\n> ");
+            Console.Write("\nPlease enter the Id of the record you want to edit or Enter 0 to return to main menu\n> ");
             Console.ResetColor();
             string idInput = Console.ReadLine();
             if(idInput == "0") { UserInput(); }
