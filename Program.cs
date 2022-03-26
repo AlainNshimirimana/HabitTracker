@@ -1,17 +1,19 @@
 ﻿using System;
-using System.Data.SQLite;
 using Microsoft.Data.Sqlite;
 using System.IO;
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace HabitTracker
 {
-    internal class Program
+    public class Program
     {
         static string connectionString = @"Data Source=habitTracker.db";
         static void Main(string[] args)
         {
             //string connectionString = @"Data Source=habitTracker.db";
-            using (var connection = new SQLiteConnection(connectionString))
+            using (var connection = new SqliteConnection(connectionString))
             {
                 connection.Open();
                 var cmd = connection.CreateCommand(); // create a command to send to the database
@@ -76,14 +78,44 @@ namespace HabitTracker
 
         static void GetRecords()  //retrieve records from the server
         {
-
+            Console.Clear();
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+                var cmd = connection.CreateCommand();
+                cmd.CommandText = $"SELECT * FROM WorkoutTracker";
+                List<Workout> workoutTracked = new(); 
+                // read data from the DB
+                SqliteDataReader reader = cmd.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        workoutTracked.Add(
+                            new Workout
+                            {
+                                // tell reader what kind of date type (GetInt32) we're reading from the DB
+                                // and what column (0,1, or 2) is located on the table
+                                Id = reader.GetInt32(0),
+                                Date = DateTime.ParseExact(reader.GetString(1), "MM-dd-yy", new CultureInfo("en-US")),
+                                Duration = reader.GetInt32(2)
+                            }); ;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No Data Found");
+                }
+                cmd.ExecuteNonQuery();
+                connection.Close();
+            }
         }
         private static void AddRecord() //add new record
         {
             string date = DateInput();
             int hoursDuration = HoursInput();
             //now add the user inputs to the database
-            using (var connection = new SQLiteConnection(connectionString))
+            using (var connection = new SqliteConnection(connectionString))
             {
                 connection.Open();
                 var cmd = connection.CreateCommand();
@@ -96,7 +128,7 @@ namespace HabitTracker
         internal static string DateInput()
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("\nPlease enter workout date (Format: dd-mm-yy): Enter 0 to return to main menu \n> ");
+            Console.Write("\nPlease enter workout date (Format: mm-dd-yy): Enter 0 to return to main menu \n> ");
             Console.ResetColor();
             string dateInput = Console.ReadLine();
             if (dateInput == "0") { UserInput(); }
@@ -119,5 +151,12 @@ namespace HabitTracker
         {
 
         }
+    }
+
+    public class Workout
+    {
+        public int Id { get; set; }
+        public DateTime Date { get; set; }
+        public int Duration { get; set; }
     }
 }
