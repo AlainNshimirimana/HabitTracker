@@ -40,7 +40,7 @@ namespace HabitTracker
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("\nWhat would you like to do (TYPE A NUMBER)");
                 Console.ResetColor();
-                Console.WriteLine("0. Close app");
+                Console.WriteLine("0. Close App");
                 Console.WriteLine("1. View All Records");
                 Console.WriteLine("2. New Record Entry");
                 Console.WriteLine("3. Delete Record");
